@@ -1,0 +1,92 @@
+"use client";
+
+import { useState } from "react";
+import { BookOpen, Heart } from "lucide-react";
+import HeroSection from "@/components/HeroSection";
+import BookCard from "@/components/BookCard";
+import BookDetailModal from "@/components/BookDetailModal";
+import { bookReviews, type BookReview } from "@/data/books";
+
+const genres = ["All", ...Array.from(new Set(bookReviews.map((b) => b.genre)))];
+
+const Index = () => {
+  const [selectedBook, setSelectedBook] = useState<BookReview | null>(null);
+  const [activeGenre, setActiveGenre] = useState("All");
+
+  const filtered =
+    activeGenre === "All"
+      ? bookReviews
+      : bookReviews.filter((b) => b.genre === activeGenre);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <HeroSection />
+
+      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+        {/* Genre filter */}
+        <div className="mb-8 flex flex-wrap items-center gap-2">
+          {genres.map((genre) => (
+            <button
+              key={genre}
+              onClick={() => setActiveGenre(genre)}
+              className={`rounded-full px-4 py-1.5 font-body text-sm font-medium transition-colors ${
+                activeGenre === genre
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-accent"
+              }`}
+            >
+              {genre}
+            </button>
+          ))}
+        </div>
+
+        {/* Stats */}
+        <div className="mb-8 flex items-center gap-6 border-b border-border pb-6">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <BookOpen className="h-4 w-4" />
+            <span className="font-body text-sm">{bookReviews.length} books reviewed</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Heart className="h-4 w-4 fill-primary text-primary" />
+            <span className="font-body text-sm">
+              {bookReviews.filter((b) => b.recommendation).length} recommended
+            </span>
+          </div>
+        </div>
+
+        {/* Book grid */}
+        <div className="grid gap-6 sm:grid-cols-2">
+          {filtered.map((book, i) => (
+            <BookCard
+              key={book.id}
+              book={book}
+              index={i}
+              onSelect={setSelectedBook}
+            />
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <p className="py-16 text-center font-body text-muted-foreground">
+            No reviews in this genre yet — stay tuned!
+          </p>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-8 text-center">
+        <p className="font-body text-sm text-muted-foreground">
+          Between the Pages © 2026 — Made with love and lots of bookmarks
+        </p>
+      </footer>
+
+      <BookDetailModal
+        book={selectedBook}
+        open={!!selectedBook}
+        onOpenChange={(open) => !open && setSelectedBook(null)}
+      />
+    </div>
+  );
+};
+
+export default Index;
