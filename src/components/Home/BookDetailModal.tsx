@@ -1,10 +1,9 @@
-"use client"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Heart, BookOpen } from "lucide-react";
 import StarRating from "../../app/layout/StarRating";
 import type { BookReview } from "@/data/books";
-
-const bookPlaceholder = "https://via.placeholder.com/150x200?text=Book";
+import bookPlaceholder from "../../assets/book-placehoder.jpg";
+import Image from "next/image";
 
 interface BookDetailModalProps {
   book: BookReview | null;
@@ -25,7 +24,7 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
         </DialogHeader>
         <div className="flex flex-col sm:flex-row gap-6 mt-2">
           <div className="w-40 shrink-0 self-center sm:self-start">
-            <img
+            <Image
               src={book.coverUrl || bookPlaceholder}
               alt={`Cover of ${book.title}`}
               className="w-full rounded-md shadow-md"
@@ -53,7 +52,7 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
               <span className="font-display text-sm font-semibold">My Review</span>
             </div>
             <p className="mt-2 font-body text-sm leading-relaxed text-foreground/90">
-              
+              {book.fullReview}
             </p>
           </div>
         </div>

@@ -5,14 +5,15 @@ import { bookReviews, type BookReview } from "@/data/books";
 import { useState } from "react";
 import BookDetailModal from "./BookDetailModal";
 
-const genres = ["All", ...Array.from(new Set(bookReviews.map((b) => b.genre)))];
+const genres = ["Todos", ...Array.from(new Set(bookReviews.map((b) => b.genre)))];
 
 const Recomendations = () => {
   const [selectedBook, setSelectedBook] = useState<BookReview | null>(null);
-  const [activeGenre, setActiveGenre] = useState("All");
+  const [activeGenre, setActiveGenre] = useState("Todos");
+
 
   const filtered =
-    activeGenre === "All"
+    activeGenre === "Todos"
       ? bookReviews
       : bookReviews.filter((b) => b.genre === activeGenre);
 

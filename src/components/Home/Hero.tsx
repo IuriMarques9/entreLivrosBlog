@@ -27,10 +27,10 @@ const Hero = () => {
             <BookOpen className="h-6 w-6 text-primary-foreground" />
           </div>
           <h1 className="font-display text-4xl font-bold leading-tight text-primary-foreground sm:text-5xl md:text-6xl">
-            Between the Pages
+            Entre Livros
           </h1>
           <p className="mt-4 font-body text-lg text-primary-foreground/80">
-            Honest reviews & heartfelt recommendations from my reading journey
+            Recomendações e opiniões de livros para apaixonados por leitura. Descubra novas histórias e autores através das minhas leituras.
           </p>
         </motion.div>
       </div>

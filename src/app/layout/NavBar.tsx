@@ -20,7 +20,7 @@ const Navbar = () => {
         <Link href="/" className="flex items-center gap-2 group">
           <BookOpen className="h-5 w-5 text-primary transition-transform group-hover:scale-110" />
           <span className="font-display text-lg font-bold text-foreground">
-            Between the Pages
+            Entre Livros
           </span>
         </Link>
 

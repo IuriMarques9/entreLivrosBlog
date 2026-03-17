@@ -12,13 +12,13 @@ const Content = () => {
           transition={{ duration: 0.6 }}
         >
           <h1 className="font-display text-4xl font-bold text-foreground">
-            Sobre Mim
+            Quem sou eu?
           </h1>
           <div className="mt-2 h-1 w-16 rounded-full bg-primary" />
 
           <div className="mt-8 space-y-6 font-body text-base leading-relaxed text-foreground/85">
             <p>
-              Olá! Bem-vindo ao <span className="font-semibold text-foreground">Between the Pages</span> — 
+              Olá! Bem-vindo ao <span className="font-semibold text-primary">Entre Livros</span> — 
               o meu cantinho na internet onde partilho as minhas leituras, reflexões e recomendações de livros.
             </p>
             <p>
@@ -47,7 +47,7 @@ const Content = () => {
             <div className="rounded-lg border border-border bg-card p-5 text-center">
               <Mail className="mx-auto h-6 w-6 text-primary" />
               <p className="mt-2 font-display text-2xl font-bold text-foreground">Contacto</p>
-              <p className="font-body text-sm text-muted-foreground">olá@example.com</p>
+              <p className="font-body text-sm text-muted-foreground">tatilopesfelicio@gmail.com</p>
             </div>
           </div>
         </motion.div>
