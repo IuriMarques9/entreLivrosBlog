@@ -1,14 +1,12 @@
 import Footer from "@/app/layout/Footer";
 import Navbar from "../layout/NavBar";
 import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers'
 import { BookReview } from "@/interface/book";
 import Table from "@/components/Admin/Table";
 
 
-const cookieStore = await cookies()
 async function getBooks() : Promise<BookReview[]> {
-  const supabase = await createClient(cookieStore)
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('BookReview')

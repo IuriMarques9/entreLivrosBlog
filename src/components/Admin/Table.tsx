@@ -23,11 +23,40 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import type { BookReview } from "@/interface/book";
+import { addBook, updateBook, deleteBook } from '@/app/admin/actions'
+
 
 const Dashboard = ( { tabela }: { tabela: BookReview[] } ) => {
   
- 
+  const [formOpen, setFormOpen] = useState(false)
+  const [editingBook, setEditingBook] = useState<BookReview | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null)
 
+  const handleEdit = (book: BookReview) => {
+    setEditingBook(book)
+    setFormOpen(true)
+  }
+
+  const handleAdd = () => {
+    setEditingBook(null)
+    setFormOpen(true)
+  }
+
+  const handleSubmit = async (data: Omit<BookReview, 'id'>) => {
+    if (editingBook) {
+      await updateBook(editingBook.id, data)
+    } else {
+      await addBook(data)
+    }
+    setFormOpen(false)
+  }
+
+  const confirmDelete = async () => {
+    if (deleteTarget) {
+      await deleteBook(deleteTarget)
+      setDeleteTarget(null)
+    }
+  }
   
  
   return (
@@ -94,6 +123,7 @@ const Dashboard = ( { tabela }: { tabela: BookReview[] } ) => {
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:text-destructive"
+                          onClick={() => setDeleteTarget(book.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -115,7 +145,7 @@ const Dashboard = ( { tabela }: { tabela: BookReview[] } ) => {
       </main>
 
       
-      <AlertDialog >
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Eliminar livro?</AlertDialogTitle>
@@ -125,7 +155,7 @@ const Dashboard = ( { tabela }: { tabela: BookReview[] } ) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction>Eliminar</AlertDialogAction>
+            <AlertDialogAction onClick={confirmDelete}>Eliminar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -1,11 +1,12 @@
+
 export interface BookReview {
-  id: string
+  id: number
   title: string
   author: string
   rating: number
   genre: string
-  reviewDate: string
+  reviewDate: Date
   shortReview: string
   fullReview: string
-  recommendation: string
+  recommendation: boolean
 }
