@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { BookOpen, Heart } from "lucide-react";
 import StarRating from "../../app/layout/StarRating";
 import type { BookReview } from "@/interface/book";
-import bookPlaceholder from "../../assets/book-placehoder.jpg";
 import Image from "next/image";
 
 interface BookCardProps {
@@ -13,6 +12,7 @@ interface BookCardProps {
 }
 
 const BookCard = ({ book, index, onSelect }: BookCardProps) => {
+  
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -23,9 +23,12 @@ const BookCard = ({ book, index, onSelect }: BookCardProps) => {
     >
       <div className="flex gap-5">
         <div className="w-24 shrink-0 overflow-hidden rounded-md">
+        
           <Image
-            src={book.coverUrl || bookPlaceholder}
-            alt={`Cover of ${book.title}`}
+            src={`${book.bookCoverUrl || ""}`}
+            width={160}
+            height={240}
+            alt={`Capa de ${book.title}`}
             className="h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
@@ -43,7 +46,7 @@ const BookCard = ({ book, index, onSelect }: BookCardProps) => {
               {book.title}
             </h3>
             <p className="mt-0.5 font-body text-sm text-muted-foreground">
-              by {book.author}
+              de {book.author}
             </p>
           </div>
           <div className="mt-3 flex items-center gap-1.5">
@@ -59,7 +62,7 @@ const BookCard = ({ book, index, onSelect }: BookCardProps) => {
       </p>
       <div className="mt-3 flex items-center gap-1.5 font-body text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
         <BookOpen className="h-3.5 w-3.5" />
-        Read full review
+        Lê a avaliação completa
       </div>
     </motion.article>
   );

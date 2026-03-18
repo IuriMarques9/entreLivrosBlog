@@ -9,5 +9,5 @@ export interface BookReview {
   shortReview: string
   fullReview: string
   recommendation: boolean
-  coverUrl?: string
+  bookCoverUrl?: string
 }

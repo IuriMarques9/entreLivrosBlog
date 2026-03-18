@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import type { BookReview } from "@/interface/book";
 import { ImagePlus, X } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 interface BookFormModalProps {
   open: boolean;
@@ -30,7 +31,7 @@ const emptyForm = {
   shortReview: "",
   fullReview: "",
   recommendation: true,
-  coverUrl: "",
+  bookCoverUrl: "",
 };
 
 const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProps) => {
@@ -51,7 +52,7 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
         shortReview: book.shortReview,
         fullReview: book.fullReview,
         recommendation: book.recommendation,
-        coverUrl: book.coverUrl || "",
+        bookCoverUrl: book.bookCoverUrl || "",
       });
     } else {
       setForm(emptyForm);
@@ -64,23 +65,57 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
     setCoverFile(file);
     const url = URL.createObjectURL(file);
     setCoverPreview(url);
-    set("coverUrl", "");
+    set("bookCoverUrl", "");
   };
 
   const removeCover = () => {
     setCoverFile(null);
     setCoverPreview(null);
-    set("coverUrl", "");
+    set("bookCoverUrl", "");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    let bookCoverUrl = form.bookCoverUrl;
+
+    if (coverFile) {
+      const supabase = createClient();
+
+      // Sanitize filename to avoid issues with special characters on supabase storage
+      const sanitizedName = coverFile.name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9._-]/g, '-')
+        .toLowerCase();
+      const fileName = `${Date.now()}-${sanitizedName}`;
+
+      const { error } = await supabase.storage
+        .from('BookCovers')
+        .upload(fileName, coverFile);
+
+      if (error) {
+        console.error('Erro ao fazer upload:', error);
+        return;
+      }
+
+    const { data } = supabase.storage
+      .from('BookCovers')
+      .getPublicUrl(fileName);
+
+      bookCoverUrl = data.publicUrl;
+      console.log('bookCoverUrl gerado:', bookCoverUrl)
+    }
+
+    console.log('dados a submeter:', { ...form, bookCoverUrl })
+  
     onSubmit({
       ...form,
       reviewDate: book?.reviewDate || new Date().toISOString(),
-      coverUrl: form.coverUrl || undefined,
+      bookCoverUrl,
     });
+
     onOpenChange(false);
   };
 
