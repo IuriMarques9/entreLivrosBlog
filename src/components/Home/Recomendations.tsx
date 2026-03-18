@@ -37,12 +37,12 @@ const Recomendations = ({ livros, categories }: { livros: BookReview[]; categori
             <div className="mb-8 flex items-center gap-6 border-b border-border pb-6">
             <div className="flex items-center gap-2 text-muted-foreground">
                 <BookOpen className="h-4 w-4" />
-                <span className="font-body text-sm">{livros.length} books reviewed</span>
+                <span className="font-body text-sm">{livros.length} livros avaliados</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
                 <Heart className="h-4 w-4 fill-primary text-primary" />
                 <span className="font-body text-sm">
-                {livros.filter((b) => b.recommendation).length} recommended
+                {livros.filter((b) => b.recommendation).length} recomendados
                 </span>
             </div>
             </div>
@@ -61,7 +61,7 @@ const Recomendations = ({ livros, categories }: { livros: BookReview[]; categori
 
             {filtered.length === 0 && (
             <p className="py-16 text-center font-body text-muted-foreground">
-                No reviews in this genre yet — stay tuned!
+                Ainda sem recomendações. Fica atento!
             </p>
             )}
 

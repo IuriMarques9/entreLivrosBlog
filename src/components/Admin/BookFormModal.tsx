@@ -14,6 +14,13 @@ import { Switch } from "@/components/ui/switch";
 import type { BookReview } from "@/interface/book";
 import { ImagePlus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BookFormModalProps {
   open: boolean;
@@ -33,6 +40,23 @@ const emptyForm = {
   recommendation: true,
   bookCoverUrl: "",
 };
+
+const genres = [
+  "Auto-ajuda",
+  "Ficção",
+  "História",
+  "Sociologia/Política",
+  "Livros Técnicos",
+  "Romance",
+  "Drama",
+  "Biografia",
+  "Fantasia",
+  "Mistério",
+  "Ficção Científica",
+  "Filosofia",
+  "Psicologia",
+  "Clássicos",
+];
 
 const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProps) => {
   const [form, setForm] = useState(emptyForm);
@@ -146,8 +170,20 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
               <Label htmlFor="genre">Género</Label>
-              <Input id="genre" required value={form.genre} onChange={(e) => set("genre", e.target.value)} />
+              <Select value={form.genre} onValueChange={(v) => set("genre", v)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="-" />
+                </SelectTrigger>
+                <SelectContent className="w-full">
+                  {genres.map((genre) => (
+                    <SelectItem key={genre} value={genre}>
+                      {genre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+
             <div className="space-y-1.5">
               <Label htmlFor="rating">Avaliação (1-5)</Label>
               <Input
@@ -169,6 +205,7 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
                 />            
             </div>
           </div>
+
 
           {/* Cover image upload */}
           <div className="space-y-1.5">
