@@ -42,10 +42,10 @@ const emptyForm = {
 };
 
 const genres = [
-  "Auto-ajuda",
+  "Autoajuda",
   "Ficção",
   "História",
-  "Sociologia/Política",
+  "Sociologia e Política",
   "Livros Técnicos",
   "Romance",
   "Drama",
@@ -56,6 +56,8 @@ const genres = [
   "Filosofia",
   "Psicologia",
   "Clássicos",
+  "Desenvolvimento Pessoal",
+  "Policial e Thriller",
 ];
 
 const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProps) => {
@@ -167,23 +169,24 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="genre">Género</Label>
-              <Select value={form.genre} onValueChange={(v) => set("genre", v)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="-" />
-                </SelectTrigger>
-                <SelectContent className="w-full">
-                  {genres.map((genre) => (
-                    <SelectItem key={genre} value={genre}>
-                      {genre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          
+          <div className="space-y-1.5">
+            <Label htmlFor="genre">Género</Label>
+            <Select value={form.genre} onValueChange={(v) => set("genre", v)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="-" />
+              </SelectTrigger>
+              <SelectContent className="w-full">
+                {genres.map((genre) => (
+                  <SelectItem key={genre} value={genre}>
+                    {genre}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="rating">Avaliação (1-5)</Label>
               <Input
@@ -205,7 +208,6 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
                 />            
             </div>
           </div>
-
 
           {/* Cover image upload */}
           <div className="space-y-1.5">

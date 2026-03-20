@@ -71,10 +71,10 @@ const Dashboard = ( { tabela }: { tabela: BookReview[] } ) => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="font-display text-3xl font-bold text-foreground">
-                Dashboard
+                Painel de administraçao
               </h1>
               <p className="mt-1 font-body text-sm text-muted-foreground">
-                Gere as tuas resenhas de livros
+                Gere as tuas recomendações de livros
               </p>
             </div>
             <Button onClick={handleAdd} className="gap-2">
