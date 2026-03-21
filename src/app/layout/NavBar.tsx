@@ -1,6 +1,5 @@
 "use client";
 
-import { BookOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -18,9 +17,9 @@ const Navbar = () => {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
         
         {/* Logo */}
-        <Link href="/" className="">
-          <Image src="/logo-letras.png" alt="Entre Livros" width={150} height={200} />
-        </Link>
+          <Link href="/" className="">
+            <Image src="/logo.png" className="object-cover" alt="Entre Livros" width={150} height={200} />
+          </Link>
 
         {/* Links */}
         <div className="flex items-center gap-1">

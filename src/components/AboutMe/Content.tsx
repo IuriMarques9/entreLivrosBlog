@@ -18,18 +18,19 @@ const Content = () => {
 
           <div className="mt-8 space-y-6 font-body text-base leading-relaxed text-foreground/85">
             <p>
-              Olá! Bem-vindo ao <span className="font-semibold text-primary">Entre Livros</span> — 
-              o meu cantinho na internet onde partilho as minhas leituras, reflexões e recomendações de livros.
+              Olá! Bem-vindo(a) ao <span className="font-semibold text-primary">Entre Livros</span> — o espaço na internet onde partilho as minhas leituras, reflexões e recomendações de livros.
             </p>
             <p>
-              Sou uma leitora apaixonada que acredita que um bom livro pode mudar a nossa perspetiva 
-              sobre o mundo. Aqui vais encontrar resenhas honestas, desde ficção literária a memórias, 
-              passando por ficção científica e desenvolvimento pessoal.
+              Chamo-me Tatiana e, além de jornalista, uma leitora apaixonada que acredita que um bom livro pode mudar a nossa perspetiva sobre o mundo. 
             </p>
             <p>
-              O meu objetivo é simples: ajudar-te a encontrar a tua próxima leitura favorita. Cada 
-              resenha é escrita com carinho e honestidade, porque acredito que os leitores merecem 
-              opiniões genuínas.
+              O meu objetivo é simples: ajudar-te a encontrar a tua próxima leitura favorita.
+            </p>
+            <p>
+              Cada avaliação é escrita com honestidade, porque acredito que os leitores merecem opiniões genuínas.
+            </p>
+            <p>
+              Espero que gostes tanto de estar “Entre Livros” como eu!
             </p>
           </div>
 

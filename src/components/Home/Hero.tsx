@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import heroImage from "../../../public/hero-books.jpg";
-import logo from "../../../public/logo-horizontal.png";
+import logo from "../../../public/logo-hero.png";
 import Image from "next/image";
 
 const Hero = () => {
