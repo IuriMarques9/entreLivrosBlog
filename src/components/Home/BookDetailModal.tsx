@@ -50,7 +50,7 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
             </p>
             <div className="mt-4 flex items-center gap-1.5 text-primary">
               <BookOpen className="h-4 w-4" />
-              <span className="font-display text-sm font-semibold">Minha Avaliação</span>
+              <span className="font-display text-sm font-semibold">A minha avaliação</span>
             </div>
             <div className="mt-2 max-h-48 overflow-y-auto pr-2">
               <p className="font-body text-sm leading-relaxed text-foreground/90">

@@ -49,7 +49,7 @@ const BookCard = ({ book, index, onSelect }: BookCardProps) => {
               de {book.author}
             </p>
           </div>
-          <div className="mt-3 flex items-center gap-1.5">
+          <div className="mt-3 flex items-center gap-1.5 flex-wrap">
             <StarRating rating={book.rating} />
             <span className="font-body text-xs text-muted-foreground">
               {book?.reviewDate ? new Date(book.reviewDate).toLocaleDateString('pt-PT') : new Date().toLocaleDateString('pt-PT')}
@@ -57,7 +57,7 @@ const BookCard = ({ book, index, onSelect }: BookCardProps) => {
           </div>
         </div>
       </div>
-      <p className="mt-4 font-body text-sm leading-relaxed text-muted-foreground line-clamp-2">
+      <p className="mt-4 font-body text-sm leading-relaxed text-muted-foreground">
         {book.shortReview}
       </p>
       <div className="mt-3 flex items-center gap-1.5 font-body text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">

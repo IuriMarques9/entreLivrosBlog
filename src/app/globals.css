@@ -108,3 +108,28 @@
 .read-the-docs {
   color: #888;
 }
+
+/*-----------------------------------------------------------------------------------*/
+
+*::-webkit-scrollbar {
+  width: 5px;              /* largura da barra vertical */
+  height: 5px;             /* altura da barra horizontal */
+}
+
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;      /* cor do fundo da trilha */
+}
+
+*::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb:hover{
+    background: hsl(var(--primary) / 0.8);
+    cursor: pointer;
+}
+
+*::-webkit-scrollbar-button{
+    display: none;
+}
