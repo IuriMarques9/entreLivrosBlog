@@ -32,7 +32,7 @@ const Hero = () => {
 
           />
           <p className="mt-4 font-body text-lg text-primary-foreground/80">
-            Recomendações e opiniões de livros para apaixonados por leitura. Descubra novas histórias e autores através das minhas leituras.
+            Recomendações e opiniões de livros para apaixonados por leitura. <br />Descobre novas histórias e autores através das minhas leituras.
           </p>
         </motion.div>
       </div>
