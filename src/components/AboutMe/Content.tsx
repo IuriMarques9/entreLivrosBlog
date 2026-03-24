@@ -18,7 +18,7 @@ const Content = ( { quantidadeDeLivros, categoriaFavorita }: { quantidadeDeLivro
           </h1>
           <div className="mt-2 h-1 w-16 rounded-full bg-primary" />
 
-          <div className="mt-8 space-y-6 font-body text-base leading-relaxed text-foreground/85">
+          <div className="mt-8 space-y-4 font-body text-base leading-relaxed text-foreground/85">
             <p>
               Olá! Bem-vindo(a) ao <span className="font-semibold text-primary">Entre Livros</span> — o espaço na internet onde partilho as minhas leituras, reflexões e recomendações de livros.
             </p>

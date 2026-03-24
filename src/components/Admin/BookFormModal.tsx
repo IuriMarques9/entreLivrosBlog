@@ -35,7 +35,7 @@ const emptyForm = {
   rating: 0,
   genre: "",
   reviewDate: new Date().toISOString(),
-  shortReview: "",
+  sinopse: "",
   fullReview: "",
   recommendation: true,
   bookCoverUrl: "",
@@ -75,7 +75,7 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
         rating: book.rating,
         genre: book.genre,
         reviewDate: book.reviewDate,
-        shortReview: book.shortReview,
+        sinopse: book.sinopse,
         fullReview: book.fullReview,
         recommendation: book.recommendation,
         bookCoverUrl: book.bookCoverUrl || "",
@@ -133,8 +133,6 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
       bookCoverUrl = data.publicUrl;
       console.log('bookCoverUrl gerado:', bookCoverUrl)
     }
-
-    console.log('dados a submeter:', { ...form, bookCoverUrl })
   
     onSubmit({
       ...form,
@@ -147,6 +145,7 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
 
   const set = (key: string, value: unknown) =>
     setForm((prev) => ({ ...prev, [key]: value }));
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -250,12 +249,12 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="shortReview">Resumo da Resenha</Label>
-            <Textarea id="shortReview" required rows={2} value={form.shortReview} onChange={(e) => set("shortReview", e.target.value)} />
+            <Label htmlFor="sinopse">Sinopse do livro</Label>
+            <Textarea id="sinopse" required rows={2} value={form.sinopse} onChange={(e) => set("sinopse", e.target.value)} />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="fullReview">Resenha Completa</Label>
+            <Label htmlFor="fullReview">Avaliação Completa</Label>
             <Textarea id="fullReview" required rows={4} value={form.fullReview} onChange={(e) => set("fullReview", e.target.value)} />
           </div>
 

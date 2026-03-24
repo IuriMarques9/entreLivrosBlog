@@ -13,6 +13,7 @@ interface BookDetailModalProps {
 const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => {
   if (!book) return null;
 
+  console.log(book.fullReview);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl bg-card border-border">

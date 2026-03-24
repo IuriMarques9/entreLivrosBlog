@@ -58,7 +58,7 @@ const BookCard = ({ book, index, onSelect }: BookCardProps) => {
         </div>
       </div>
       <p className="mt-4 font-body text-sm leading-relaxed text-muted-foreground">
-        {book.shortReview}
+        {book.sinopse}
       </p>
       <div className="mt-3 flex items-center gap-1.5 font-body text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
         <BookOpen className="h-3.5 w-3.5" />

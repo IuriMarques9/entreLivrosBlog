@@ -6,7 +6,7 @@ export interface BookReview {
   rating: number
   genre: string
   reviewDate: string
-  shortReview: string
+  sinopse: string
   fullReview: string
   recommendation: boolean
   bookCoverUrl?: string
