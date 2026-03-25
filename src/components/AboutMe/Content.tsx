@@ -23,16 +23,16 @@ const Content = ( { quantidadeDeLivros, categoriaFavorita }: { quantidadeDeLivro
             <Image
               src={sobreMimImg}
               alt="Foto pessoal com livros"
-              className="w-60 h-48 rounded-2xl object-cover shadow-lg ring-2 ring-primary/20 flex-shrink-0"
-              width={200}
-              height={200}
+              className="w-2/6 rounded-2xl object-cover shadow-lg ring-2 ring-primary/20 flex-shrink-0"
+              width={250}
+              height={250}
             />
             <div className="space-y-6 font-body text-base leading-relaxed text-foreground/85">
               <p>
                 Olá! Bem-vindo(a) ao <span className="font-semibold text-primary">Entre Livros</span> — o espaço na internet onde partilho as minhas leituras, reflexões e recomendações de livros.
               </p>
               <p>
-                Chamo-me Tatiana e, além de jornalista, uma leitora apaixonada que acredita que um bom livro pode mudar a nossa perspetiva sobre o mundo. 
+                Chamo-me Tatiana e, além de jornalista, sou uma leitora apaixonada que acredita que um bom livro pode mudar a nossa perspetiva sobre o mundo. 
               </p>
               <p>
                 O meu objetivo é simples: ajudar-te a encontrar a tua próxima leitura favorita.
