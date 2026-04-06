@@ -14,8 +14,6 @@ interface BookCardProps {
 }
 
 const BookCard = ({ book, index, onSelect, isExpanded, onToggle }: BookCardProps) => {
-
-  
   return (
     /* 1. O Wrapper mantém o espaço na grid (h-full ou altura fixa se necessário) */
     <div className="relative min-h-[300px] w-full"> 
@@ -70,7 +68,7 @@ const BookCard = ({ book, index, onSelect, isExpanded, onToggle }: BookCardProps
              <button
               onClick={(e) => {
                 e.stopPropagation();
-                onToggle(); // Chama a função que fecha os outros e abre este
+                onToggle();
               }}
               className="sm:hidden flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 font-body text-xs font-medium text-primary hover:bg-accent transition-colors"
             >

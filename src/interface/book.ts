@@ -11,3 +11,18 @@ export interface BookReview {
   recommendation: boolean
   bookCoverUrl?: string
 }
+
+export interface BookComment {
+  id: string
+  book_id: number
+  user_identifier: string
+  comment_text: string
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateCommentInput {
+  book_id: number
+  user_identifier: string
+  comment_text: string
+}

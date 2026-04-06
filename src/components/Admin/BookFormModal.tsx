@@ -21,12 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import BookCommentsAdmin from "./BookCommentsAdmin";
 
 interface BookFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   book?: BookReview | null;
   onSubmit: (data: Omit<BookReview, "id">) => void;
+  onCommentDeleted?: () => void;
 }
 
 const emptyForm = {
@@ -62,7 +64,7 @@ const genres = [
   "BD/Novela Gráfica",
 ];
 
-const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProps) => {
+const BookFormModal = ({ open, onOpenChange, book, onSubmit, onCommentDeleted }: BookFormModalProps) => {
   const [form, setForm] = useState(emptyForm);
 
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -278,6 +280,10 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit }: BookFormModalProp
             </Button>
           </div>
         </form>
+
+        {book && (
+          <BookCommentsAdmin bookId={book.id} bookTitle={book.title} onCommentDeleted={onCommentDeleted} />
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -1,8 +1,12 @@
+"use client";
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Heart, BookOpen } from "lucide-react";
 import StarRating from "../../app/layout/StarRating";
 import type { BookReview } from "@/interface/book";
 import Image from "next/image";
+import CommentsSection from "./CommentsSection";
+import { useBookComments } from "@/hooks/useBookComments";
 
 interface BookDetailModalProps {
   book: BookReview | null;
@@ -13,10 +17,15 @@ interface BookDetailModalProps {
 const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => {
   if (!book) return null;
 
-  
+  const { comments, loading, error, addComment, setRefreshKey } = useBookComments(book.id);
+
+  const handleCommentAdded = () => {
+    setRefreshKey(prev => prev + 1);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl w-[90vw] bg-card border-border">
+      <DialogContent className="max-w-2xl w-[90vw] bg-card border-border max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl font-bold text-foreground">
             {book.title}
@@ -59,6 +68,16 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="mt-6">
+          <CommentsSection
+            bookId={book.id}
+            comments={comments}
+            onCommentAdded={handleCommentAdded}
+            isLoading={loading}
+            error={error}
+          />
         </div>
       </DialogContent>
     </Dialog>
