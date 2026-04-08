@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Content from "@/components/AboutMe/Content";
 import Footer from "@/app/layout/Footer";
 import Navbar from "../layout/NavBar";
 import { createClient } from "@/lib/supabase/client";
 import { BookReview } from "@/interface/book";
+
+export const metadata: Metadata = {
+  title: "Sobre Mim",
+  description:
+    "Conhece a Tatiana Felicio, a leitora por detras do blog Entre Livros. Descobre a sua historia, os seus gostos literarios e o que a inspira.",
+};
 
 async function getBooks() : Promise<BookReview[]> {
   const supabase = await createClient()

@@ -13,6 +13,9 @@ const Hero = () => {
           src={heroImage}
           alt="Hero Image"
           className="h-full w-full object-cover"
+          priority
+          placeholder="blur"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-foreground/60" />
       </div>

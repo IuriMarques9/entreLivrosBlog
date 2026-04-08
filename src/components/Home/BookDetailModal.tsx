@@ -15,13 +15,13 @@ interface BookDetailModalProps {
 }
 
 const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => {
-  if (!book) return null;
-
-  const { comments, loading, error, addComment, setRefreshKey } = useBookComments(book.id);
+  const { comments, loading, error, addComment, setRefreshKey } = useBookComments(book?.id ?? 0);
 
   const handleCommentAdded = () => {
     setRefreshKey(prev => prev + 1);
   };
+
+  if (!book) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -33,13 +33,20 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
         </DialogHeader>
         <div className="flex flex-col sm:flex-row gap-6 mt-2">
           <div className="w-40 shrink-0 self-center sm:self-start">
-            <Image
-              src={book.bookCoverUrl || ""}
-              alt={`Capa de ${book.title}`}
-              width={160}
-              height={240}
-              className="w-full rounded-md shadow-md"
-            />
+            {book.bookCoverUrl ? (
+              <Image
+                src={book.bookCoverUrl}
+                alt={`Capa de ${book.title}`}
+                width={160}
+                height={240}
+                className="w-full rounded-md shadow-md"
+                sizes="160px"
+              />
+            ) : (
+              <div className="w-full aspect-[2/3] bg-muted flex items-center justify-center rounded-md shadow-md">
+                <BookOpen className="h-10 w-10 text-muted-foreground" />
+              </div>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-body text-muted-foreground">de {book.author}</p>

@@ -23,16 +23,32 @@ const BookCard = ({ book, index, onSelect, isExpanded, onToggle }: BookCardProps
         transition={{ duration: 0.5, delay: index * 0.1 }}
         className={`group cursor-pointer rounded-lg bg-card p-5 shadow-sm border border-border/50 absolute top-0 left-0 w-full h-fit ${isExpanded ? "z-20 shadow-xl border-primary/30 " : "z-10 hover:z-20"}  transition-all duration-300 hover:shadow-xl`}
         onClick={() => onSelect(book)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onSelect(book);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Ver detalhes de ${book.title} por ${book.author}`}
       >
         <div className="flex gap-5">
           <div className="w-24 shrink-0 overflow-hidden rounded-md">
-            <Image
-              src={`${book.bookCoverUrl || ""}`}
-              width={160}
-              height={240}
-              alt={`Capa de ${book.title}`}
-              className="h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+            {book.bookCoverUrl ? (
+              <Image
+                src={book.bookCoverUrl}
+                width={160}
+                height={240}
+                alt={`Capa de ${book.title}`}
+                className="h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                sizes="96px"
+              />
+            ) : (
+              <div className="h-36 w-full bg-muted flex items-center justify-center rounded-md">
+                <BookOpen className="h-8 w-8 text-muted-foreground" />
+              </div>
+            )}
           </div>
           <div className="flex flex-col justify-between min-w-0">
             <div>
@@ -70,6 +86,8 @@ const BookCard = ({ book, index, onSelect, isExpanded, onToggle }: BookCardProps
                 e.stopPropagation();
                 onToggle();
               }}
+              aria-expanded={isExpanded}
+              aria-label={isExpanded ? "Recolher sinopse" : "Expandir sinopse"}
               className="sm:hidden flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 font-body text-xs font-medium text-primary hover:bg-accent transition-colors"
             >
               {isExpanded ? <EyeClosed className="h-3 w-3" /> : <Eye className="h-3 w-3" />}

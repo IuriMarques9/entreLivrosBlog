@@ -16,7 +16,7 @@ const Recomendations = ({ livros, categories }: { livros: BookReview[]; categori
     const filtered = activeGenre === "Todos" ? livros : livros.filter((b) => b.genre === activeGenre);
 
     return (
-        <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 ">
+        <main id="main-content" className="mx-auto max-w-5xl px-4 py-12 sm:px-6 ">
             
             {/* Genre filter */}
             <div className="mb-8 flex flex-wrap items-center gap-2">
@@ -24,6 +24,7 @@ const Recomendations = ({ livros, categories }: { livros: BookReview[]; categori
                 <button
                 key={genre}
                 onClick={() => setActiveGenre(genre)}
+                aria-pressed={activeGenre === genre}
                 className={`rounded-full px-4 py-1.5 font-body text-sm font-medium transition-colors ${
                     activeGenre === genre
                     ? "bg-primary text-primary-foreground"
