@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npm list:*)",
-      "Bash(npx supabase-cli:*)"
+      "Bash(npx supabase-cli:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

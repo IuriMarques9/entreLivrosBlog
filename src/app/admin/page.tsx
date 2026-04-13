@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { BookReview, BookComment } from "@/interface/book";
 import Table from "@/components/Admin/Table";
 import { getUnreadComments } from "./actions";
-  const unreadComments = await getUnreadComments();
 
 
 async function getBooks() : Promise<BookReview[]> {
@@ -22,13 +21,14 @@ async function getBooks() : Promise<BookReview[]> {
 
 export default async function AdminPage() {
   const tabela = await getBooks();
+  const unreadComments = await getUnreadComments();
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
       <Table tabela={tabela} unreadComments={unreadComments} />
-      
+
       <Footer />
     </div>
   );
