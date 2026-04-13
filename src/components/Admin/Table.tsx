@@ -22,13 +22,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { BookReview } from "@/interface/book";
+import type { BookReview, BookComment } from "@/interface/book";
 import { addBook, updateBook, deleteBook } from '@/app/admin/actions'
 import BookFormModal from "./BookFormModal";
 import BookCommentCount from "./BookCommentCount";
+import NotificationCenter from "@/components/Admin/NotificationCenterSimple";
 
 
-const Dashboard = ( { tabela }: { tabela: BookReview[] } ) => {
+const Dashboard = ( { tabela, unreadComments }: { tabela: BookReview[], unreadComments: BookComment[] } ) => {
   
   const [formOpen, setFormOpen] = useState(false)
   const [editingBook, setEditingBook] = useState<BookReview | null>(null)
@@ -81,10 +82,15 @@ const Dashboard = ( { tabela }: { tabela: BookReview[] } ) => {
                 Gere as tuas recomendações de livros
               </p>
             </div>
-            <Button onClick={handleAdd} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Novo Livro
-            </Button>
+
+            <div className="flex items-center gap-4">
+              <NotificationCenter initialUnreadComments={unreadComments} />
+              
+              <Button onClick={handleAdd} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Novo Livro
+              </Button>
+            </div>
           </div>
 
           <div className="mt-8 rounded-lg border border-border bg-card">

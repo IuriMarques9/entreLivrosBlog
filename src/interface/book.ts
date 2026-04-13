@@ -19,6 +19,8 @@ export interface BookComment {
   comment_text: string
   created_at: string
   updated_at: string
+  is_read?: boolean
+  book_title?: string
 }
 
 export interface CreateCommentInput {
