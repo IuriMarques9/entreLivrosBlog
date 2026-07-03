@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
+    // 31 dias: as capas nunca mudam de conteúdo (filename único por upload),
+    // por isso o cache longo no Vercel evita re-fetches ao Supabase (egress).
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       {
         protocol: 'https',

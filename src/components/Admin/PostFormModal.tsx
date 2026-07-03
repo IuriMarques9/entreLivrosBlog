@@ -92,7 +92,8 @@ const PostFormModal = ({ open, onOpenChange, post, books, onSubmit }: PostFormMo
         .replace(/[^a-zA-Z0-9._-]/g, "-")
         .toLowerCase();
       const fileName = `${Date.now()}-${sanitized}`;
-      const { error } = await supabase.storage.from("PostCovers").upload(fileName, coverFile);
+      // cache longo é seguro: o fileName é único (Date.now()), nunca é reescrito
+      const { error } = await supabase.storage.from("PostCovers").upload(fileName, coverFile, { cacheControl: "31536000" });
       if (error) {
         console.error("Erro upload cover post:", error);
         setUploading(false);

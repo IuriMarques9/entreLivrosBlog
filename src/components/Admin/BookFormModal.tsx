@@ -126,7 +126,8 @@ const BookFormModal = ({ open, onOpenChange, book, onSubmit, onCommentDeleted }:
 
       const { error } = await supabase.storage
         .from('BookCovers')
-        .upload(fileName, coverFile);
+        // cache longo é seguro: o fileName é único (Date.now()), nunca é reescrito
+        .upload(fileName, coverFile, { cacheControl: '31536000' });
 
       if (error) {
         console.error('Erro ao fazer upload:', error);
