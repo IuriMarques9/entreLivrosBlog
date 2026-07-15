@@ -95,13 +95,6 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
                     <p className="font-body text-sm leading-relaxed text-foreground/90">
                       {book.fullReview}
                     </p>
-                    <Link
-                      href={bookHref(book)}
-                      className="mt-3 inline-flex items-center gap-1 font-body text-xs font-medium text-primary hover:underline"
-                    >
-                      Abrir página da avaliação
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </Link>
                   </div>
                 )}
               </div>
@@ -128,6 +121,14 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
                 )}
               </div>
             </div>
+
+            <Link
+              href={bookHref(book)}
+              className="mt-3 inline-flex items-center gap-1 font-body text-xs font-medium text-primary hover:underline"
+            >
+              Abrir página da avaliação
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
         </div>
 
