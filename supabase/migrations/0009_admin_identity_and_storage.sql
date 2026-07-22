@@ -175,6 +175,19 @@ insert into storage.buckets (id, name, public)
   values ('BookCovers', 'BookCovers', true)
   on conflict (id) do nothing;
 
+-- Drop the legacy dashboard-generated BookCovers policies (auto-named
+-- "<Op> 1rap6o5_*"). They granted write to ANY authenticated session (i.e. any
+-- anonymous visitor) with only a bucket_id check — the exact hole this closes.
+-- Must be dropped by their real names, otherwise the permissive OLD policies
+-- keep coexisting with (and overriding, since storage policies are permissive)
+-- the identity-gated ones below.
+drop policy if exists "Insert 1rap6o5_0" on storage.objects;
+drop policy if exists "Update 1rap6o5_0" on storage.objects;
+drop policy if exists "Delete 1rap6o5_0" on storage.objects;
+drop policy if exists "Select 1rap6o5_0" on storage.objects;
+drop policy if exists "Update 1rap6o5_1" on storage.objects;
+drop policy if exists "Delete 1rap6o5_1" on storage.objects;
+
 drop policy if exists "BookCovers public read" on storage.objects;
 create policy "BookCovers public read"
   on storage.objects for select
