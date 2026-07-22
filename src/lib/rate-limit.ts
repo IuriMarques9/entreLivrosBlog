@@ -94,9 +94,20 @@ export async function rateLimitDistributed(
 // and route handlers. Falls back to "unknown" when no header is present.
 export async function getRequestIp(): Promise<string> {
   const h = await headers()
-  const fwd = h.get('x-forwarded-for')
-  if (fwd) return fwd.split(',')[0]!.trim()
+  // Prefer x-real-ip: Vercel/its proxy sets it to the true client IP, and
+  // unlike x-forwarded-for a client can't prepend spoofed entries to it.
   const real = h.get('x-real-ip')
   if (real) return real.trim()
+  // Fall back to the LAST x-forwarded-for hop — the entry appended by the
+  // trusted proxy — never the leftmost, which is fully attacker-controlled.
+  const fwd = h.get('x-forwarded-for')
+  if (fwd) {
+    const last = fwd
+      .split(',')
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .pop()
+    if (last) return last
+  }
   return 'unknown'
 }

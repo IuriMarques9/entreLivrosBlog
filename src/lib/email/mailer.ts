@@ -18,8 +18,14 @@ export interface NewContentEmail {
   url: string
 }
 
+export interface ConfirmTarget {
+  email: string
+  confirm_token: string
+}
+
 const CONTENT_SUBJECT = 'Há novidades no Entre Livros 📚'
 const WELCOME_SUBJECT = 'Bem-vindo à newsletter do Entre Livros 📚'
+const CONFIRM_SUBJECT = 'Confirma a tua subscrição · Entre Livros 📚'
 
 const CHUNK = 25
 
@@ -101,6 +107,51 @@ function buildWelcomeHtml(unsubscribeUrl: string) {
         Recebes este email porque subscreveste a newsletter do Entre Livros.
         <a href="${unsubscribeUrl}" style="color:#999">Cancelar subscrição</a>.
       </p>`)
+}
+
+function buildConfirmHtml(confirmUrl: string) {
+  return shellHtml(`
+      <h1 style="font-size:22px;line-height:1.3;margin:0 0 16px">Confirma a tua subscrição 📚</h1>
+      <p style="font-size:15px;line-height:1.6;color:#444;margin:0 0 24px">
+        Falta só um passo: carrega no botão para confirmares que queres receber
+        a newsletter do Entre Livros. Sem esta confirmação não te enviamos nada.
+      </p>
+      <a href="${confirmUrl}" style="display:inline-block;background:#1a1a1a;color:#fff;text-decoration:none;padding:12px 24px;border-radius:6px;font-size:15px">Confirmar subscrição</a>
+      <hr style="border:none;border-top:1px solid #e5e0d8;margin:32px 0 16px" />
+      <p style="font-size:12px;color:#999;line-height:1.5;margin:0">
+        Se não foste tu a subscrever, ignora este email — sem a confirmação, o
+        teu endereço não fica na lista.
+      </p>`)
+}
+
+/**
+ * Sends the double opt-in confirmation email (RGPD). Until the reader clicks
+ * the link, the subscription stays unconfirmed and receives no content.
+ * No-ops (logs) when SMTP is not configured. Never throws.
+ */
+export async function sendConfirmationEmail(
+  subscriber: ConfirmTarget
+): Promise<void> {
+  const transport = getTransport()
+  if (!transport) {
+    console.warn('SMTP not configured — skipping confirmation email')
+    return
+  }
+
+  const confirmUrl = `${SITE_URL}/newsletter/confirm?token=${subscriber.confirm_token}`
+  try {
+    await transport.sendMail({
+      from: FROM,
+      to: subscriber.email,
+      subject: CONFIRM_SUBJECT,
+      html: buildConfirmHtml(confirmUrl),
+    })
+  } catch (err) {
+    console.error(
+      `Confirmation email failed for ${maskEmail(subscriber.email)}:`,
+      err
+    )
+  }
 }
 
 /**

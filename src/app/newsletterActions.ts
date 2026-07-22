@@ -2,13 +2,19 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { rateLimitDistributed, getRequestIp } from '@/lib/rate-limit'
-import { sendWelcomeEmail } from '@/lib/email/mailer'
+import { sendConfirmationEmail } from '@/lib/email/mailer'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// Global daily ceiling across ALL clients: even if an attacker rotates IPs to
+// dodge the per-IP limit, they can't drive more than this many subscribe
+// attempts (and confirmation e-mails) per day.
+const GLOBAL_DAILY_CAP = 300
+const ONE_DAY_MS = 24 * 60 * 60 * 1000
+
 export async function subscribeNewsletter(
   email: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; message?: string }> {
   const ip = await getRequestIp()
   const rl = await rateLimitDistributed(`newsletter:${ip}`, 5, 10 * 60 * 1000)
   if (!rl.allowed) {
@@ -21,35 +27,47 @@ export async function subscribeNewsletter(
     return { success: false, error: 'Email inválido' }
   }
 
+  // Global cap: guards the confirmation-email send path against IP rotation.
+  const globalRl = await rateLimitDistributed(
+    'newsletter:global:day',
+    GLOBAL_DAILY_CAP,
+    ONE_DAY_MS
+  )
+  if (!globalRl.allowed) {
+    return { success: false, error: 'Não foi possível subscrever agora. Tenta mais tarde.' }
+  }
+
   const supabase = await createClient()
 
-  // Generate the token server-side: the RLS select policy is admin-only,
-  // so we can't read the row back after inserting as anon. Knowing the
-  // token up front lets us send the welcome email with a working
-  // unsubscribe link.
-  const unsubscribe_token = crypto.randomUUID()
-
-  const { error } = await supabase
-    .from('newsletter_subscribers')
-    .insert({
-      email: value,
-      consent_at: new Date().toISOString(),
-      unsubscribe_token,
-    })
+  // Double opt-in: a new subscription is created unconfirmed and only counts
+  // once the reader clicks the confirmation link. The admin-only SELECT policy
+  // means we can't read the row back as anon, so a SECURITY DEFINER RPC does the
+  // insert-or-report atomically and hands back the token to e-mail (server-side
+  // only — it never reaches the browser).
+  const { data, error } = await supabase.rpc('newsletter_subscribe', {
+    p_email: value,
+  })
 
   if (error) {
-    // 23505 = unique_violation (already subscribed). Respond identically to a
-    // fresh subscription so the form can't be used to probe whether a given
-    // e-mail is already on the list (membership enumeration).
-    if (error.code === '23505') {
-      return { success: true }
-    }
     console.error('Error subscribing to newsletter:', error)
     return { success: false, error: 'Não foi possível subscrever' }
   }
 
-  // First-time subscriber: send the welcome email (best-effort, never blocks).
-  await sendWelcomeEmail({ email: value, unsubscribe_token })
+  const row = Array.isArray(data) ? data[0] : data
+  const status: string | undefined = row?.status
+  const confirmToken: string | undefined = row?.confirm_token ?? undefined
 
-  return { success: true }
+  // Send the confirmation e-mail only when there is something to confirm
+  // (new or still-pending). Already-confirmed sends nothing.
+  if (status !== 'already_confirmed' && confirmToken) {
+    await sendConfirmationEmail({ email: value, confirm_token: confirmToken })
+  }
+
+  // Uniform response for every outcome — never reveal whether this address was
+  // already a (confirmed) subscriber. Distinct messages would be an e-mail
+  // enumeration oracle; keep the reply identical in all three cases.
+  return {
+    success: true,
+    message: 'Se este email ainda não estava confirmado, enviámos-te um link para confirmares a subscrição.',
+  }
 }

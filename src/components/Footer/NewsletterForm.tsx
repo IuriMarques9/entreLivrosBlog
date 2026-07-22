@@ -34,9 +34,11 @@ const NewsletterForm = () => {
         return;
       }
 
-      // Uniform message whether new or already-subscribed (privacy: don't
-      // reveal whether the address was already on the list).
-      toast.success("Obrigado! Se ainda não estavas, ficaste subscrito.");
+      // Double opt-in: the action tells us whether a confirmation email went
+      // out or the address was already confirmed.
+      toast.success(
+        result.message || "Enviámos-te um email para confirmares a subscrição."
+      );
 
       setEmail("");
       setConsent(false);
