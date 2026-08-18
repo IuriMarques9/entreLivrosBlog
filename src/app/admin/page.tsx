@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { BookReview, BookComment } from "@/interface/book";
 import { Post } from "@/interface/post";
 import AdminTabs from "@/components/Admin/AdminTabs";
-import { getUnreadComments, getSubscribers, getSuggestions, getCommentCounts } from "./actions";
+import { getUnreadComments, getUnreadLikes, getSubscribers, getSuggestions, getCommentCounts } from "./actions";
 
 
 async function getBooks() : Promise<BookReview[]> {
@@ -33,9 +33,10 @@ async function getPosts(): Promise<Post[]> {
 
 
 export default async function AdminPage() {
-  const [books, unreadComments, posts, subscribers, suggestions, commentCounts] = await Promise.all([
+  const [books, unreadComments, unreadLikes, posts, subscribers, suggestions, commentCounts] = await Promise.all([
     getBooks(),
     getUnreadComments(),
+    getUnreadLikes(),
     getPosts(),
     getSubscribers(),
     getSuggestions(),
@@ -49,6 +50,7 @@ export default async function AdminPage() {
       <AdminTabs
         books={books}
         unreadComments={unreadComments}
+        unreadLikes={unreadLikes}
         posts={posts}
         subscribers={subscribers}
         suggestions={suggestions}

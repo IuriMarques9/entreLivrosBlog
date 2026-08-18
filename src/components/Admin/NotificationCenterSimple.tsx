@@ -1,16 +1,31 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bell, Check } from "lucide-react";
-import { BookComment } from "@/interface/book";
-import { markCommentAsRead, markAllCommentsAsRead } from "@/app/admin/actions";
+import { Bell, Check, Heart, MessageCircle } from "lucide-react";
+import { BookComment, BookLikeNotification } from "@/interface/book";
+import {
+  markCommentAsRead,
+  markAllCommentsAsRead,
+  markLikeAsRead,
+  markAllLikesAsRead,
+} from "@/app/admin/actions";
 
 interface NotificationCenterProps {
   initialUnreadComments: BookComment[];
+  initialUnreadLikes: BookLikeNotification[];
 }
 
-export default function NotificationCenter({ initialUnreadComments }: NotificationCenterProps) {
+// Uma lista única, ordenada por data, com comentários e gostos misturados.
+type NotificationItem =
+  | { kind: "comment"; id: string; created_at: string; comment: BookComment }
+  | { kind: "like"; id: string; created_at: string; like: BookLikeNotification };
+
+export default function NotificationCenter({
+  initialUnreadComments,
+  initialUnreadLikes,
+}: NotificationCenterProps) {
   const [unreadComments, setUnreadComments] = useState<BookComment[]>(initialUnreadComments);
+  const [unreadLikes, setUnreadLikes] = useState<BookLikeNotification[]>(initialUnreadLikes);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +43,24 @@ export default function NotificationCenter({ initialUnreadComments }: Notificati
     };
   }, []);
 
-  const handleMarkAsRead = async (commentId: string) => {
+  const items: NotificationItem[] = [
+    ...unreadComments.map((comment): NotificationItem => ({
+      kind: "comment",
+      id: comment.id,
+      created_at: comment.created_at,
+      comment,
+    })),
+    ...unreadLikes.map((like): NotificationItem => ({
+      kind: "like",
+      id: like.id,
+      created_at: like.created_at,
+      like,
+    })),
+  ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  const totalUnread = items.length;
+
+  const handleMarkCommentAsRead = async (commentId: string) => {
     // Atualização otimista
     setUnreadComments(prev => prev.filter(comment => comment.id !== commentId));
 
@@ -46,23 +78,56 @@ export default function NotificationCenter({ initialUnreadComments }: Notificati
     }
   };
 
+  const handleMarkLikeAsRead = async (likeId: string) => {
+    // Atualização otimista
+    setUnreadLikes(prev => prev.filter(like => like.id !== likeId));
+
+    try {
+      const result = await markLikeAsRead(likeId);
+      if (!result.success) {
+        // Reverter se falhar
+        setUnreadLikes(prev => [...prev, initialUnreadLikes.find(l => l.id === likeId)!]);
+        console.error("Erro ao marcar como lido:", result.error);
+      }
+    } catch (error) {
+      // Reverter se falhar
+      setUnreadLikes(prev => [...prev, initialUnreadLikes.find(l => l.id === likeId)!]);
+      console.error("Erro ao marcar como lido:", error);
+    }
+  };
+
   const handleMarkAllAsRead = async () => {
     // Atualização otimista
     setUnreadComments([]);
+    setUnreadLikes([]);
 
     try {
-      const result = await markAllCommentsAsRead();
-      if (!result.success) {
-        // Reverter se falhar
+      const [commentsResult, likesResult] = await Promise.all([
+        markAllCommentsAsRead(),
+        markAllLikesAsRead(),
+      ]);
+      if (!commentsResult.success) {
         setUnreadComments(initialUnreadComments);
-        console.error("Erro ao marcar todos como lidos:", result.error);
+        console.error("Erro ao marcar todos como lidos:", commentsResult.error);
+      }
+      if (!likesResult.success) {
+        setUnreadLikes(initialUnreadLikes);
+        console.error("Erro ao marcar todos como lidos:", likesResult.error);
       }
     } catch (error) {
       // Reverter se falhar
       setUnreadComments(initialUnreadComments);
+      setUnreadLikes(initialUnreadLikes);
       console.error("Erro ao marcar todos como lidos:", error);
     }
   };
+
+  const formatDate = (value: string) =>
+    new Date(value).toLocaleDateString('pt-PT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -72,9 +137,9 @@ export default function NotificationCenter({ initialUnreadComments }: Notificati
         aria-label="Notificações"
       >
         <Bell className="h-6 w-6" />
-        {unreadComments.length > 0 && (
+        {totalUnread > 0 && (
           <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white border-2 border-background">
-            {unreadComments.length}
+            {totalUnread}
           </span>
         )}
       </button>
@@ -84,7 +149,7 @@ export default function NotificationCenter({ initialUnreadComments }: Notificati
           <div className="p-4 border-b">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">Notificações</h3>
-              {unreadComments.length > 0 && (
+              {totalUnread > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
                   className="text-xs text-muted-foreground hover:text-foreground"
@@ -96,35 +161,51 @@ export default function NotificationCenter({ initialUnreadComments }: Notificati
           </div>
 
           <div className="max-h-96 overflow-y-auto">
-            {unreadComments.length === 0 ? (
+            {totalUnread === 0 ? (
               <div className="p-4 text-center text-muted-foreground">
                 Nenhuma notificação nova
               </div>
             ) : (
               <ul>
-                {unreadComments.map((comment) => (
+                {items.map((item) => (
                   <li
-                    key={comment.id}
+                    key={`${item.kind}-${item.id}`}
                     className="border-b border-border last:border-b-0 p-4 hover:bg-muted/50"
                   >
                     <div className="flex justify-between">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">
-                          {comment.book_title || `Comentário no livro #${comment.book_id}`}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                          {comment.comment_text}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(comment.created_at).toLocaleDateString('pt-BR', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                          })}
-                        </p>
-                      </div>
+                      {item.kind === "comment" ? (
+                        <div className="flex-1 min-w-0">
+                          <p className="flex items-center gap-1.5 text-sm font-medium truncate">
+                            <MessageCircle className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+                            {item.comment.book_title || `Comentário no livro #${item.comment.book_id}`}
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                            {item.comment.comment_text}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {formatDate(item.created_at)}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex-1 min-w-0">
+                          <p className="flex items-center gap-1.5 text-sm font-medium truncate">
+                            <Heart className="h-3.5 w-3.5 shrink-0 fill-primary text-primary" aria-hidden="true" />
+                            {item.like.book_title || `Livro #${item.like.book_id}`}
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Recebeu um novo gosto
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {formatDate(item.created_at)}
+                          </p>
+                        </div>
+                      )}
                       <button
-                        onClick={() => handleMarkAsRead(comment.id)}
+                        onClick={() =>
+                          item.kind === "comment"
+                            ? handleMarkCommentAsRead(item.id)
+                            : handleMarkLikeAsRead(item.id)
+                        }
                         className="ml-2 flex-shrink-0 text-muted-foreground hover:text-foreground"
                         aria-label="Marcar como lido"
                       >

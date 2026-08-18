@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth-guard'
 import { revalidatePath } from 'next/cache'
 import { after } from 'next/server'
-import type { BookReview, BookComment } from '@/interface/book'
+import type { BookReview, BookComment, BookLikeNotification } from '@/interface/book'
 import type { NewsletterSubscriber } from '@/interface/newsletter'
 import type { Suggestion } from '@/interface/suggestion'
 import { notifyNewContent } from '@/lib/email/notify'
@@ -241,6 +241,91 @@ export async function markAllCommentsAsRead() {
 
   if (error) {
     console.error('Error marking all comments as read:', error)
+    return { success: false, error: error.message }
+  }
+
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+// Likes não lidos para o Centro de Notificações — mesmo fluxo dos comentários.
+export async function getUnreadLikes(): Promise<BookLikeNotification[]> {
+  const guard = await requireAdmin()
+  if (!guard.ok) return []
+
+  const supabase = await createClient()
+
+  const { data: likes, error: likesError } = await supabase
+    .from('book_likes')
+    .select('id, book_id, created_at, is_read')
+    .eq('is_read', false)
+    .order('created_at', { ascending: false })
+
+  if (likesError) {
+    console.error('Error fetching unread likes:', likesError)
+    return []
+  }
+
+  if (!likes || likes.length === 0) {
+    return []
+  }
+
+  const bookIds = [...new Set(likes.map(like => like.book_id))]
+
+  const { data: books, error: booksError } = await supabase
+    .from('BookReview')
+    .select('id, title')
+    .in('id', bookIds)
+
+  if (booksError) {
+    console.error('Error fetching book titles:', booksError)
+    return likes as BookLikeNotification[]
+  }
+
+  const bookTitlesMap = books.reduce((acc, book) => {
+    acc[book.id] = book.title
+    return acc
+  }, {} as Record<number, string>)
+
+  return likes.map(like => ({
+    ...like,
+    book_title: bookTitlesMap[like.book_id] || `Livro #${like.book_id}`
+  })) as BookLikeNotification[]
+}
+
+export async function markLikeAsRead(likeId: string) {
+  const guard = await requireAdmin()
+  if (!guard.ok) return { success: false, error: guard.error }
+
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('book_likes')
+    .update({ is_read: true })
+    .eq('id', likeId)
+
+  if (error) {
+    console.error('Error marking like as read:', error)
+    return { success: false, error: error.message }
+  }
+
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function markAllLikesAsRead() {
+  const guard = await requireAdmin()
+  if (!guard.ok) return { success: false, error: guard.error }
+
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('book_likes')
+    .update({ is_read: true })
+    .eq('is_read', false)
+
+  if (error) {
+    console.error('Error marking all likes as read:', error)
     return { success: false, error: error.message }
   }
 

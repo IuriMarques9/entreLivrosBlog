@@ -24,6 +24,14 @@ export interface BookComment {
   book_title?: string
 }
 
+export interface BookLikeNotification {
+  id: string
+  book_id: number
+  created_at: string
+  is_read?: boolean
+  book_title?: string
+}
+
 export interface CreateCommentInput {
   book_id: number
   user_identifier: string

@@ -23,7 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { BookReview, BookComment } from "@/interface/book";
+import type { BookReview, BookComment, BookLikeNotification } from "@/interface/book";
 import { addBook, updateBook, deleteBook } from '@/app/admin/actions'
 import BookFormModal from "./BookFormModal";
 import BookCommentCount from "./BookCommentCount";
@@ -31,8 +31,8 @@ import NotificationCenter from "@/components/Admin/NotificationCenterSimple";
 
 
 const Dashboard = (
-  { tabela, unreadComments, commentCounts }:
-  { tabela: BookReview[], unreadComments: BookComment[], commentCounts: Record<number, number> }
+  { tabela, unreadComments, unreadLikes, commentCounts }:
+  { tabela: BookReview[], unreadComments: BookComment[], unreadLikes: BookLikeNotification[], commentCounts: Record<number, number> }
 ) => {
 
   const [formOpen, setFormOpen] = useState(false)
@@ -95,7 +95,7 @@ const Dashboard = (
             </div>
 
             <div className="flex items-center gap-2">
-              <NotificationCenter initialUnreadComments={unreadComments} />
+              <NotificationCenter initialUnreadComments={unreadComments} initialUnreadLikes={unreadLikes} />
               
               <Button onClick={handleAdd} className="gap-2">
                 <Plus className="h-4 w-4" />

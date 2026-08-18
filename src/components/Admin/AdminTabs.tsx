@@ -5,7 +5,7 @@ import Table from "./Table";
 import PostsTable from "./PostsTable";
 import SubscribersTable from "./SubscribersTable";
 import SuggestionsTable from "./SuggestionsTable";
-import type { BookReview, BookComment } from "@/interface/book";
+import type { BookReview, BookComment, BookLikeNotification } from "@/interface/book";
 import type { Post } from "@/interface/post";
 import type { NewsletterSubscriber } from "@/interface/newsletter";
 import type { Suggestion } from "@/interface/suggestion";
@@ -13,6 +13,7 @@ import type { Suggestion } from "@/interface/suggestion";
 interface AdminTabsProps {
   books: BookReview[];
   unreadComments: BookComment[];
+  unreadLikes: BookLikeNotification[];
   posts: Post[];
   subscribers: NewsletterSubscriber[];
   suggestions: Suggestion[];
@@ -24,6 +25,7 @@ type TabKey = "reviews" | "posts" | "newsletter" | "suggestions";
 const AdminTabs = ({
   books,
   unreadComments,
+  unreadLikes,
   posts,
   subscribers,
   suggestions,
@@ -67,7 +69,7 @@ const AdminTabs = ({
       </div>
 
       {tab === "reviews" && (
-        <Table tabela={books} unreadComments={unreadComments} commentCounts={commentCounts} />
+        <Table tabela={books} unreadComments={unreadComments} unreadLikes={unreadLikes} commentCounts={commentCounts} />
       )}
 
       {tab === "posts" && (

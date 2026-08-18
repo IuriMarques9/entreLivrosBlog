@@ -9,7 +9,9 @@ import type { BookReview } from "@/interface/book";
 import Image from "next/image";
 import CommentsSection from "./CommentsSection";
 import { useBookComments } from "@/hooks/useBookComments";
+import { useBookLikes } from "@/hooks/useBookLikes";
 import { bookHref } from "@/lib/bookSlug";
+import { toast } from "sonner";
 
 interface BookDetailModalProps {
   book: BookReview | null;
@@ -21,7 +23,13 @@ type Section = "review" | "sinopse";
 
 const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => {
   const { comments, loading, error, addComment, setRefreshKey } = useBookComments(book?.id ?? 0);
+  const { count: likeCount, likedByMe, toggling, toggleLike } = useBookLikes(book?.id ?? 0);
   const [openSection, setOpenSection] = useState<Section | null>("review");
+
+  const handleToggleLike = async () => {
+    const ok = await toggleLike();
+    if (!ok) toast.error("Não foi possível registar o gosto. Tenta novamente.");
+  };
 
   const toggleSection = (section: Section) =>
     setOpenSection((prev) => (prev === section ? null : section));
@@ -71,6 +79,25 @@ const BookDetailModal = ({ book, open, onOpenChange }: BookDetailModalProps) => 
                 </span>
               )}
             </div>
+            <button
+              type="button"
+              onClick={handleToggleLike}
+              disabled={toggling}
+              aria-pressed={likedByMe}
+              aria-label={likedByMe ? "Remover gosto" : "Gostar desta avaliação"}
+              className={`mt-2 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-body text-xs font-medium transition-colors disabled:opacity-60 ${
+                likedByMe
+                  ? "border-primary/40 bg-primary/10 text-primary"
+                  : "border-border bg-secondary/50 text-secondary-foreground hover:bg-secondary"
+              }`}
+            >
+              <Heart
+                className={`h-3.5 w-3.5 ${likedByMe ? "fill-primary text-primary" : ""}`}
+                aria-hidden="true"
+              />
+              {likedByMe ? "Gostei" : "Gosto"}
+              {likeCount > 0 && <span aria-label={`${likeCount} gostos`}>· {likeCount}</span>}
+            </button>
             <p className="mt-1 font-body text-xs text-muted-foreground">
               Avaliação {book?.reviewDate ? new Date(book.reviewDate).toLocaleDateString('pt-PT') : new Date().toLocaleDateString('pt-PT')}
             </p>
